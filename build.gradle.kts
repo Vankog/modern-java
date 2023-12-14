@@ -23,19 +23,20 @@ tasks.withType(Test::class).configureEach({
 private fun optimalForkCount(): Int {
     return (Runtime.getRuntime().availableProcessors() / 2).coerceAtLeast(1)
 }
+
 private val optimalForkCount = optimalForkCount()
 
-subprojects {
+allprojects {
 
-    apply(plugin="java")
-    apply(plugin="jacoco")
+    apply(plugin = "java")
+    apply(plugin = "jacoco")
 
     java({
         toolchain {
             languageVersion.set(JavaLanguageVersion.of(21))
         }
     })
-    
+
     jacoco({
         toolVersion = "0.8.11" // https://github.com/jacoco/jacoco/releases
     })
@@ -44,6 +45,9 @@ subprojects {
         val compilerArgs = options.compilerArgs
         compilerArgs.add("--enable-preview")
         options.encoding = "UTF-8"
+    }
+    tasks.withType<JavaExec> {
+        jvmArgs(listOf("--enable-preview"))
     }
 
     tasks.test {
