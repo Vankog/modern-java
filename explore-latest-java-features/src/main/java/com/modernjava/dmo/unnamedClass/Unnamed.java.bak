@@ -1,0 +1,42 @@
+import java.util.Objects;
+
+public int myInt = 5;
+
+void main() {
+    new Other().doIt(this);
+}
+
+@Override
+public boolean equals(final Object o) {
+    if (this == o) return true;
+    if (null == o || getClass() != o.getClass()) return false;
+    try {
+        var myIntField = o.getClass().getField("myInt");
+        return Objects.equals(myInt, myIntField.getInt(o));
+    } catch (IllegalAccessException | NoSuchFieldException e) {
+        throw new RuntimeException(e);
+    }
+}
+
+@Override
+public int hashCode() {
+    return Objects.hash(myInt);
+}
+
+
+class Other {
+    Class<?> doIt(Object unnamedObject) {
+        Class<?> enclosingClass = getClass().getEnclosingClass();
+        System.out.println(STR."unnamed class: \{enclosingClass}");
+
+        try {
+            var newUnnamed = enclosingClass.newInstance();
+            System.out.println(newUnnamed);
+            System.out.println(STR."unnamed equals: \{newUnnamed.equals(unnamedObject)}");
+            System.out.println(STR."unnamed ==: \{newUnnamed == unnamedObject}");
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        return enclosingClass;
+    }
+}
